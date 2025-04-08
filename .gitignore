@@ -1,0 +1,29 @@
+# ==========================
+# Entorno virtual de Python
+# ==========================
+venv/  # Carpeta del entorno virtual (no se sube, se recrea con requirements.txt)
+
+# ==========================
+# Archivos temporales de Python
+# ==========================
+__pycache__/  # Cache de Python compilado
+*.pyc         # Archivos bytecode compilados
+
+# ==========================
+# Salidas y archivos generados por la app
+# ==========================
+uploads/      # Archivos XML subidos por el usuario
+outputs/      # Archivos Excel generados automáticamente
+
+# ==========================
+# Archivos de configuración sensibles
+# ==========================
+.env          # Variables de entorno (por ejemplo, claves o rutas privadas)
+
+# ==========================
+# Archivos del sistema (opcional)
+# ==========================
+.DS_Store     # macOS
+Thumbs.db     # Windows
+
+

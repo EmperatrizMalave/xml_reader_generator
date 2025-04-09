@@ -37,7 +37,7 @@ def subir():
 
         # Namespaces obligatorios para CFDI del SAT (3.3 y 4.0)
         namespaces = {
-            'cfdi': 'http://www.sat.gob.mx/cfd/3',
+            'cfdi': 'http://www.sat.gob.mx/cfd/4',
             'tfd': 'http://www.sat.gob.mx/TimbreFiscalDigital'
         }
 

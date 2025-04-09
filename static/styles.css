@@ -31,7 +31,7 @@ body {
     font-weight: bold;               /* Texto en negrita */
 }
 
-  /*  Campo de carga de archivos */
+/*  Campo de carga de archivos */
 #archivo {
     width: 100%;                     /* Que ocupe todo el ancho disponible */
     padding: 6px;                    /* Espacio interior del input */

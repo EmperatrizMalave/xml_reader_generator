@@ -1,0 +1,54 @@
+/* Estilo general del cuerpo del documento */
+body {
+    background-color: #f9f9f9;         /* Color de fondo suave */
+    font-family: Arial, sans-serif;    /* Fuente legible y moderna */
+    margin: 0;
+    padding: 0;
+}
+
+  /* Estilo del título principal */
+#titulo {
+    text-align: center;                /* Centra el texto horizontalmente */
+    padding-top: 30px;                 /* Espacio arriba del título */
+    color: #333;                       /* Color de texto gris oscuro */
+}
+
+  /* Contenedor del formulario */
+#formulario {
+    width: 300px;                      /* Ancho fijo del formulario */
+    margin: 40px auto 0 auto;          /* Centrado horizontal con espacio arriba */
+    background: white;                /* Fondo blanco del formulario */
+    padding: 20px;                    /* Relleno interno */
+    border: 1px solid #ccc;           /* Borde gris claro */
+    border-radius: 8px;               /* Esquinas redondeadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+}
+
+  /* Etiqueta del input */
+#labelArchivo {
+    display: block;                   /* Hace que ocupe toda la línea */
+    margin-bottom: 8px;              /* Espacio debajo del texto */
+    font-weight: bold;               /* Texto en negrita */
+}
+
+  /*  Campo de carga de archivos */
+#archivo {
+    width: 100%;                     /* Que ocupe todo el ancho disponible */
+    padding: 6px;                    /* Espacio interior del input */
+    margin-bottom: 15px;            /* Espacio debajo del campo */
+}
+  /* Botón de envío */
+#botonConvertir {
+    background-color: #007bff;       /* Azul Bootstrap */
+    color: white;                    /* Texto blanco */
+    border: none;                    /* Sin borde por defecto */
+    padding: 10px;                   /* Espaciado interno */
+    width: 100%;                     /* Que ocupe todo el ancho */
+    border-radius: 4px;              /* Bordes ligeramente redondeados */
+    cursor: pointer;                 /* Cambia a manito al pasar el mouse */
+    font-size: 16px;
+}
+  /* Efecto al pasar el mouse sobre el botón */
+#botonConvertir:hover {
+    background-color: #0056b3;       /* Azul más oscuro */
+}

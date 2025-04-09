@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>xml Reader generator</title>
+
+<!-- Vincula el archivo de estilos CSS si lo usas -->
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+<!-- Título principal -->
+<h1 id="titulo">Convertidor CFDI XML a Excel</h1>
+
+<!-- Formulario para subir el archivo XML -->
+<form id="formulario" action="/subir" method="post" enctype="multipart/form-data">
+
+    <!-- Etiqueta para el input de archivo -->
+    <label for="archivo" id="labelArchivo">Sube tu archivo XML:</label><br>
+
+    <!-- Campo para seleccionar el archivo .xml -->
+    <input id="archivo" type="file" name="archivo" accept=".xml" required><br><br>
+
+    <!-- Botón para enviar el formulario -->
+    <button id="botonConvertir" type="submit">Convertir a Excel</button>
+
+</form>
+</body>
+</html>

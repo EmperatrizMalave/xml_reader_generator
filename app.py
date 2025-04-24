@@ -1,38 +1,36 @@
 from flask import Flask, render_template, request, send_file
 import os
+import io # leer XML directamente desde la memoria
 import pandas as pd
 from lxml import etree
 from datetime import datetime
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'outputs'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Límite de 5 MB
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Ruta para subir y procesar el archivo XML
 @app.route('/subir', methods=['POST'])
 def subir():
-    archivo = request.files.get('archivo')
+    archivo = request.files.get('archivo')  # Obtiene el archivo desde el formulario
 
+    # Validación: que exista el archivo y sea .xml
     if not archivo or not archivo.filename.endswith('.xml'):
         return '❌ Formato de archivo no válido. Solo se aceptan XML.'
 
     try:
-        # Guardar archivo subido
-        ruta_xml = os.path.join(UPLOAD_FOLDER, archivo.filename)
-        archivo.save(ruta_xml)
+        # Leer el archivo XML directamente desde memoria sin guardarlo
+        xml_bytes = archivo.read()              # Lee el contenido como bytes
+        archivo_stream = io.BytesIO(xml_bytes)  # Convierte los bytes en un archivo en memoria
 
-        # Parsear XML
-        tree = etree.parse(ruta_xml)
+        # Parsear el XML directamente desde la memoria
+        tree = etree.parse(archivo_stream)
         root = tree.getroot()
+
 
         # Detectar versión CFDI
         version = root.attrib.get('Version', '')
@@ -74,16 +72,24 @@ def subir():
             'Nombre Receptor': nombre_receptor
         }
 
-        # 📁 Crear nombre único para el archivo Excel
-        nombre_salida = f"resultado_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-        ruta_excel = os.path.join(OUTPUT_FOLDER, nombre_salida)
 
-        # ✍️ Guardar en dos hojas de Excel
-        with pd.ExcelWriter(ruta_excel) as writer:
+        # generar Excel directamente en memoria
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df.to_excel(writer, sheet_name='Conceptos', index=False)
             pd.DataFrame([info_extra]).to_excel(writer, sheet_name='Datos Generales', index=False)
+        output.seek(0)  # ✅ AGREGADO: mover puntero al inicio del archivo en memoria
 
-        return send_file(ruta_excel, as_attachment=True)
+        # crear nombre de descarga para el Excel
+        nombre_descarga = f"resultado_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+
+        # enviar archivo desde memoria directamente
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name=nombre_descarga,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
 
     except Exception as e:
         return f'❌ Error al procesar el XML: {str(e)}'

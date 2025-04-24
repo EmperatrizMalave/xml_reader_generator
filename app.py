@@ -89,4 +89,5 @@ def subir():
         return f'❌ Error al procesar el XML: {str(e)}'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render proporciona PORT como variable de entorno
+    app.run(host='0.0.0.0', port=port, debug=True)

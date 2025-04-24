@@ -1,69 +1,92 @@
-# Importamos las librerías necesarias
-from flask import Flask, render_template, request, send_file  # Flask web + archivos
-import os                                                    # Para rutas y carpetas
-import pandas as pd                                          # Para trabajar con tablas y Excel
-from lxml import etree                                       # Para leer el XML CFDI (SAT)
+from flask import Flask, render_template, request, send_file
+import os
+import pandas as pd
+from lxml import etree
+from datetime import datetime
 
-# Creamos la aplicación Flask
 app = Flask(__name__)
 
-# Definimos las carpetas para subir y guardar archivos
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Límite de 5 MB
 
-# Creamos las carpetas si no existen
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# Ruta principal (GET) - Muestra el formulario HTML
 @app.route('/')
 def index():
-    return render_template('index.html')  # Carga templates/index.html
+    return render_template('index.html')
 
-# Ruta para subir y procesar el archivo XML (POST)
 @app.route('/subir', methods=['POST'])
 def subir():
-    # Recibimos el archivo desde el formulario
-    archivo = request.files['archivo']
+    archivo = request.files.get('archivo')
 
-    # Verificamos que sea un archivo XML
-    if archivo.filename.endswith('.xml'):
-        # Guardamos el archivo en la carpeta 'uploads'
+    if not archivo or not archivo.filename.endswith('.xml'):
+        return '❌ Formato de archivo no válido. Solo se aceptan XML.'
+
+    try:
+        # Guardar archivo subido
         ruta_xml = os.path.join(UPLOAD_FOLDER, archivo.filename)
         archivo.save(ruta_xml)
 
-        # Leemos el XML con lxml
+        # Parsear XML
         tree = etree.parse(ruta_xml)
+        root = tree.getroot()
 
-        # Namespaces obligatorios para CFDI del SAT (3.3 y 4.0)
-        namespaces = {
-            'cfdi': 'http://www.sat.gob.mx/cfd/4',
-            'tfd': 'http://www.sat.gob.mx/TimbreFiscalDigital'
-        }
+        # Detectar versión CFDI
+        version = root.attrib.get('Version', '')
+        if '3.3' in version:
+            namespaces = {'cfdi': 'http://www.sat.gob.mx/cfd/3'}
+        else:
+            namespaces = {'cfdi': 'http://www.sat.gob.mx/cfd/4'}
 
-        # Buscamos todos los nodos <cfdi:Concepto> en el XML
+        # Extraer conceptos
         conceptos = tree.xpath('//cfdi:Concepto', namespaces=namespaces)
-        datos = []  # Aquí guardaremos los productos/servicios
-
-        #  Recorremos cada concepto y guardamos sus atributos
-        for concepto in conceptos:
-            datos.append(concepto.attrib)  # .attrib = diccionario con datos del XML
-
-        # Creamos una tabla (DataFrame) con pandas
+        datos = [concepto.attrib for concepto in conceptos]
         df = pd.DataFrame(datos)
 
-        # Definimos la ruta de salida para el archivo Excel
-        ruta_excel = os.path.join(OUTPUT_FOLDER, 'resultado.xlsx')
+        # 🧾 Extraer datos generales del CFDI
+        comprobante = root
+        folio = comprobante.attrib.get('Folio', '')
+        fecha = comprobante.attrib.get('Fecha', '')
+        moneda = comprobante.attrib.get('Moneda', '')
+        total = comprobante.attrib.get('Total', '')
+        subtotal = comprobante.attrib.get('SubTotal', '')
 
-        # Exportamos el DataFrame a Excel
-        df.to_excel(ruta_excel, index=False)
+        emisor = tree.find('.//cfdi:Emisor', namespaces=namespaces)
+        rfc_emisor = emisor.attrib.get('Rfc', '') if emisor is not None else ''
+        nombre_emisor = emisor.attrib.get('Nombre', '') if emisor is not None else ''
 
-        # 📎 Enviamos el archivo Excel al navegador como descarga
+        receptor = tree.find('.//cfdi:Receptor', namespaces=namespaces)
+        rfc_receptor = receptor.attrib.get('Rfc', '') if receptor is not None else ''
+        nombre_receptor = receptor.attrib.get('Nombre', '') if receptor is not None else ''
+
+        info_extra = {
+            'Folio': folio,
+            'Fecha': fecha,
+            'Moneda': moneda,
+            'Subtotal': subtotal,
+            'Total': total,
+            'RFC Emisor': rfc_emisor,
+            'Nombre Emisor': nombre_emisor,
+            'RFC Receptor': rfc_receptor,
+            'Nombre Receptor': nombre_receptor
+        }
+
+        # 📁 Crear nombre único para el archivo Excel
+        nombre_salida = f"resultado_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        ruta_excel = os.path.join(OUTPUT_FOLDER, nombre_salida)
+
+        # ✍️ Guardar en dos hojas de Excel
+        with pd.ExcelWriter(ruta_excel) as writer:
+            df.to_excel(writer, sheet_name='Conceptos', index=False)
+            pd.DataFrame([info_extra]).to_excel(writer, sheet_name='Datos Generales', index=False)
+
         return send_file(ruta_excel, as_attachment=True)
 
-    # Si no es XML, mostramos un mensaje
-    return 'Formato de archivo no válido. Solo se aceptan XML.'
+    except Exception as e:
+        return f'❌ Error al procesar el XML: {str(e)}'
 
-# Inicia la app Flask si ejecutamos `python app.py`
 if __name__ == '__main__':
     app.run(debug=True)

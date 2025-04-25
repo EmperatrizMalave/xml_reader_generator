@@ -8,7 +8,7 @@ venv/  # Carpeta del entorno virtual (no se sube, se recrea con requirements.txt
 # ==========================
 __pycache__/  # Cache de Python compilado
 *.pyc         # Archivos bytecode compilados
-
+*.py[cod]
 # ==========================
 # Salidas y archivos generados por la app
 # ==========================

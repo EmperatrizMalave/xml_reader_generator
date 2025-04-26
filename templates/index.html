@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
+
 <body>
 <!-- Título principal -->
 <h1 id="titulo">Convertidor CFDI XML a Excel</h1>
@@ -25,5 +26,12 @@
     <button id="botonConvertir" type="submit">Convertir a Excel</button>
 
 </form>
+<footer id="footer">
+    <p>© <span id="anio-actual"></span> Coromoto Malave. Todos los derechos reservados.</p>
+</footer>
+<script>
+    // Script para poner el año actual automáticamente
+    document.getElementById("anio-actual").textContent = new Date().getFullYear();
+</script>
 </body>
 </html>

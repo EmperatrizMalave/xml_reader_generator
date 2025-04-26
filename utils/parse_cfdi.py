@@ -18,8 +18,78 @@ from lxml import etree
 
 # Importa datetime para generar nombres de archivos dinámicos con fecha y hora
 from datetime import datetime
+from typing import List
 
-# Define la función parse_cfdi que procesa el XML recibido en bytes
+from typing import List
+
+
+
+def parse_cfdi_lote(lista_de_xmls: List[bytes]):
+    """ Procesa múltiples XMLs y genera un Excel unificado. """
+    todos_los_conceptos = []
+    resumen_general = []
+
+    for xml_bytes in lista_de_xmls:
+        try:
+            archivo_stream = io.BytesIO(xml_bytes)
+            tree = etree.parse(archivo_stream)
+            root = tree.getroot()
+
+            # Detectar versión CFDI
+            version = root.attrib.get('Version', '')
+            if '3.3' in version:
+                ns = {'cfdi': 'http://www.sat.gob.mx/cfd/3'}
+            else:
+                ns = {'cfdi': 'http://www.sat.gob.mx/cfd/4'}
+
+            # Conceptos
+            conceptos = tree.xpath('//cfdi:Concepto', namespaces=ns)
+            datos_conceptos = [c.attrib for c in conceptos]
+            todos_los_conceptos.extend(datos_conceptos)
+
+            # Datos generales
+            folio = root.attrib.get('Folio', '')
+            fecha = root.attrib.get('Fecha', '')
+            moneda = root.attrib.get('Moneda', '')
+            total = root.attrib.get('Total', '')
+            subtotal = root.attrib.get('SubTotal', '')
+
+            emisor = tree.find('.//cfdi:Emisor', namespaces=ns)
+            rfc_emisor = emisor.attrib.get('Rfc', '') if emisor is not None else ''
+            nombre_emisor = emisor.attrib.get('Nombre', '') if emisor is not None else ''
+
+            receptor = tree.find('.//cfdi:Receptor', namespaces=ns)
+            rfc_receptor = receptor.attrib.get('Rfc', '') if receptor is not None else ''
+            nombre_receptor = receptor.attrib.get('Nombre', '') if receptor is not None else ''
+
+            resumen_general.append({
+                'Folio': folio,
+                'Fecha': fecha,
+                'Moneda': moneda,
+                'Subtotal': subtotal,
+                'Total': total,
+                'RFC Emisor': rfc_emisor,
+                'Nombre Emisor': nombre_emisor,
+                'RFC Receptor': rfc_receptor,
+                'Nombre Receptor': nombre_receptor
+            })
+
+        except Exception as e:
+            print(f"❌ Error al procesar un XML: {str(e)}")
+
+    # Crear archivo Excel unificado
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        pd.DataFrame(todos_los_conceptos).to_excel(writer, sheet_name='Conceptos', index=False)
+        pd.DataFrame(resumen_general).to_excel(writer, sheet_name='Datos Generales', index=False)
+
+    output.seek(0)
+    nombre_archivo = f"cfdi_lote_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    return output, nombre_archivo
+
+
+
+# Define la función parse_cfdi que procesa el XML un solo xml
 def parse_cfdi(xml_bytes):
     """
     Recibe un XML CFDI en forma de bytes,

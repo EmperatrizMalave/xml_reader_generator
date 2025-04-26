@@ -8,12 +8,13 @@ manteniendo el código organizado y enfocado en la interacción con el usuario.
 
 # Importa Flask y funciones para manejar solicitudes y archivos
 from flask import Flask, render_template, request, send_file 
-
 # Importa módulo OS para acceder a variables del sistema (como el puerto)
 import os
-
 # Importa la función personalizada que creaste para procesar XMLs
-from utils.parse_cfdi import parse_cfdi  # 👈 Importamos parse_cfdi desde utils
+from utils.parse_cfdi import parse_cfdi, parse_cfdi_lote
+
+
+
 
 # Inicializa la aplicación Flask
 app = Flask(__name__)
@@ -27,20 +28,24 @@ def index():
 # Define una ruta que acepta solo solicitudes POST para subir archivos
 @app.route('/subir', methods=['POST'])
 def subir():
-    # Obtiene el archivo subido desde el formulario HTML
-    archivo = request.files.get('archivo')
+    # Obtiene el o los archivos sub       el formulario HTML
+    archivos = request.files.getlist('archivo')
     # Valida que el archivo exista y que su nombre termine en '.xml'
-    if not archivo or not archivo.filename.endswith('.xml'):
-        return '❌ Formato de archivo no válido. Solo se aceptan XML.'
+    if not archivos or any(not archivo.filename.endswith('.xml') for archivo in archivos):
+        return '❌ Todos los archivos deben ser formato XML.'
 
 #Procesamiento del XML
     try:
-        # Lee todo el contenido del archivo XML como bytes
-        xml_bytes = archivo.read()
+# Leer todos los XMLs como bytes
+        lista_de_xmls = [archivo.read() for archivo in archivos]
 
-        # Procesa el contenido XML usando la función parse_cfdi (que devuelve archivo Excel y nombre)
-        output, nombre_archivo = parse_cfdi(xml_bytes)
-                # Envía el archivo generado al navegador para que el usuario lo descargue
+        # Si es solo un archivo, procesarlo individualmente
+        if len(lista_de_xmls) == 1:
+            output, nombre_archivo = parse_cfdi(lista_de_xmls[0])
+        else:
+            output, nombre_archivo = parse_cfdi_lote(lista_de_xmls)
+
+        # Envía el archivo generado al navegador para que el usuario lo descargue
         return send_file(
             output,                      # Archivo en memoria
             as_attachment=True,          # Forzar la descarga

@@ -7,7 +7,6 @@
     border-bottom: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 10px 0;
-    margin-bottom: 30px;
   }
   
   .navbar button {
@@ -23,7 +22,7 @@
   
   .navbar button.active,
   .navbar button:hover {
-    color: #0a9ead;
+    color: var(--heading-blue-dark);
   }
   
   .navbar button.active::after,
@@ -34,10 +33,9 @@
     left: 0;
     right: 0;
     height: 1.5px;
-    background-color: #0a9ead;
+    background-color: var(--accent-orange)
   }
-  
-  /* Oculta el contenido por defecto */
+    /* Oculta el contenido por defecto */
   .tabcontent {
     display: none;
     padding: 20px;

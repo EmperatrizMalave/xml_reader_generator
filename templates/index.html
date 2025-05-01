@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 <!-- Enlazamos el CSS del menú -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+
 </head>
 
 <body>
@@ -21,11 +26,20 @@
 
 <!-- ✅ Página principal (vista de bienvenida) -->
 <div id="inicio" class="tabcontent active">
-    <section id="welcome">
+    <div class="container-home">
+    <div class="bienvenida">
+        <!-- 📷 Imagen a la izquierda -->
+        <div class="imagen-bienvenida">
+            <img src="{{ url_for('static', filename='img/inicio.webp') }}" alt="Imagen de bienvenida">
+        </div>
+        <!-- 📝 Texto a la derecha -->
+        <div class="texto-bienvenida">
         <h1>Bienvenido a la Herramienta de Conversión Inteligente</h1>
         <p>Convierte fácilmente tus facturas CFDI XML, PDFs y hasta imágenes a Excel.</p>
         <p>Selecciona una opción en el menú para comenzar.</p>
-    </section>
+        </div>
+    </div>
+    </div>
 </div>
 
 <!-- ✅ Vista Convertidor CFDI XML a Excel) -->

@@ -1,0 +1,55 @@
+/* 🎨 Estilos para la vista de inicio con imagen a la izquierda */
+
+.container-home {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bienvenida {
+    display: flex;
+    flex-direction: row; /* 🧭 Mantiene imagen a la izquierda */
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 30px;
+    flex-wrap: nowrap; /* ❌ Evita que se apile en pantallas pequeñas */
+}
+
+.imagen-bienvenida img {
+    max-width: 250px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.texto-bienvenida {
+    max-width: 600px;
+    text-align: left;
+}
+
+.texto-bienvenida h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--heading-blue-dark); 
+    border-bottom: 2px solid var(--accent-orange);
+    display: inline-block; 
+}
+
+@media (max-width: 768px) {    
+    .bienvenida {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    }
+    .imagen-bienvenida img {
+    max-width: 180px;
+    }
+    .texto-bienvenida h1 {
+    font-size: 1.4rem;
+    }
+    .texto-bienvenida p {
+    font-size: 0.9rem;
+    }
+}
+
+

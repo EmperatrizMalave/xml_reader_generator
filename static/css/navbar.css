@@ -1,0 +1,50 @@
+/* 📁 Estilos de barra de navegación tipo pestañas */
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 10px 0;
+    margin-bottom: 30px;
+  }
+  
+  .navbar button {
+    background: none;
+    border: none;
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0 20px;
+    cursor: pointer;
+    color: #333;
+    position: relative;
+  }
+  
+  .navbar button.active,
+  .navbar button:hover {
+    color: #0a9ead;
+  }
+  
+  .navbar button.active::after,
+  .navbar button:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background-color: #0a9ead;
+  }
+  
+  /* Oculta el contenido por defecto */
+  .tabcontent {
+    display: none;
+    padding: 20px;
+  }
+  
+  /* Muestra solo el contenido activo */
+  .tabcontent.active {
+    display: block;
+  }
+  

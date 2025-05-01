@@ -1,11 +1,27 @@
 /* Estilo general del cuerpo del documento */
 body {
-    background-color: #f9f9f9;         /* Color de fondo suave */
-    font-family: Arial, sans-serif;    /* Fuente legible y moderna */
-    margin: 0;
-    padding: 0;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+}
+/* Título principal */
+#welcome h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #0a9ead;
+  text-align: center;
 }
 
+/* Párrafos */
+#welcome p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 10px 0;
+  text-align: center;
+}
   /* Estilo del título principal */
 #titulo {
     text-align: center;                /* Centra el texto horizontalmente */

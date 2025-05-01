@@ -2,36 +2,64 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>xml Reader generator</title>
+<title>Inicio | Convertidor Inteligente	</title>
 
 <!-- Vincula el archivo de estilos CSS si lo usas -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<!-- Enlazamos el CSS del menú -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
 </head>
 
-
 <body>
-<!-- Título principal -->
-<h1 id="titulo">Convertidor CFDI XML a Excel</h1>
+<!-- ✅ Menú de navegación-->
+<div class="navbar">
+    <button class="tablinks active" onclick="openTab(event, 'inicio')">Inicio</button>
+    <button class="tablinks" onclick="openTab(event, 'xml')">CFDI XML a ExceL</button>
+    <button class="tablinks" onclick="openTab(event, 'pdf')">PDF-Factura a excel</button>
+    <button class="tablinks" onclick="openTab(event, 'imagen')">Imagen a excel</button>
+</div>
 
-<!-- Formulario para subir el archivo XML -->
+<!-- ✅ Página principal (vista de bienvenida) -->
+<div id="inicio" class="tabcontent active">
+    <section id="welcome">
+        <h1>Bienvenido a la Herramienta de Conversión Inteligente</h1>
+        <p>Convierte fácilmente tus facturas CFDI XML, PDFs y hasta imágenes a Excel.</p>
+        <p>Selecciona una opción en el menú para comenzar.</p>
+    </section>
+</div>
+
+<!-- ✅ Vista Convertidor CFDI XML a Excel) -->
+<div id="xml" class="tabcontent">
+    <h1 id="titulo">Convertidor CFDI XML a Excel</h1>
 <form id="formulario" action="/subir" method="post" enctype="multipart/form-data">
-
     <!-- Etiqueta para el input de archivo -->
     <label for="archivo" id="labelArchivo">Sube tu archivo XML:</label><br>
-
     <!-- Campo para seleccionar el archivo .xml -->
     <input id="archivo" type="file" name="archivo" multiple accept=".xml" required><br><br>
-
     <!-- Botón para enviar el formulario -->
     <button id="botonConvertir" type="submit">Convertir a Excel</button>
-
 </form>
+</div>
+
+<!-- ✅ Vista Convertidor pdf a Excel) -->
+<div id="pdf" class="tabcontent">
+    <h1 id="titulo">Convertidor pdf a Excel</h1>
+</div>
+
+<!-- ✅ Vista Convertidor Imagen a excel) -->
+<div id="imagen" class="tabcontent">
+    <h1 id="titulo">Convertidor imagen a Excel</h1>
+</div>
 <footer id="footer">
     <p>© <span id="anio-actual"></span> Coromoto Malave. Todos los derechos reservados.</p>
 </footer>
+
 <script>
     // Script para poner el año actual automáticamente
     document.getElementById("anio-actual").textContent = new Date().getFullYear();
 </script>
+<!-- ✅ Script para que funcione el menú -->
+<script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form-reset.js') }}"></script>
 </body>
 </html>

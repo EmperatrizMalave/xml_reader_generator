@@ -58,17 +58,11 @@
 <!-- ✅ Formulario para PDF -->
 <form id="pdf" class="tabcontent" action="/subir-pdf" method="post" enctype="multipart/form-data">
     <h2>Convertidor PDF Factura a Excel</h2>
-    <label for="archivo_pdf">Sube tu factura PDF:</label><br>
-    <input type="file" id="archivo_pdf" name="archivo_pdf" accept=".pdf" required><br><br>
-    <button type="submit">Convertir PDF a Excel</button>
 </form>
 
 <!-- ✅ Formulario para Imagen (futuro OCR) -->
 <form id="imagen" class="tabcontent" action="/subir-img" method="post" enctype="multipart/form-data">
     <h2>Convertidor Imagen a Excel</h2>
-    <label for="archivo_img">Sube tu imagen de factura:</label><br>
-    <input type="file" id="archivo_img" name="archivo_img" accept="image/*" required><br><br>
-    <button type="submit">Convertir Imagen a Excel</button>
 </form>
 <footer id="footer">
     <p>© <span id="anio-actual"></span> Coromoto Malave. Todos los derechos reservados.</p>

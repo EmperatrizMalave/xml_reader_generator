@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Editor visual | PDF a Excel{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pdf-editor.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="editor-container">
+    <h1>Editor visual PDF a Excel</h1>
+
+    <!-- Botón de carga de archivo PDF -->
+    <input type="file" id="pdfUpload" accept="application/pdf" />
+
+    <!-- Botón para activar la herramienta de selección -->
+    <button id="selectorTool">Seleccionar campos</button>
+
+    <!-- Canvas para el PDF -->
+    <canvas id="pdfCanvas" width="800" height="600"></canvas>
+
+    <!-- Campos seleccionados -->
+    <div id="selectedFields">
+        <label>Campos seleccionados:</label>
+    </div>
+
+    <button id="extractButton">Exportar a Excel</button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Carga PDF.js desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<!-- Tu lógica personalizada -->
+<script src="{{ url_for('static', filename='js/extractor.js') }}"></script>
+{% endblock %}

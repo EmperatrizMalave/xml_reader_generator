@@ -12,6 +12,11 @@ from flask import Flask, render_template, request, send_file
 import os
 # Importa la función personalizada que creaste para procesar XMLs
 from utils.parse_cfdi import parse_cfdi, parse_cfdi_lote
+from utils.pdf_editor_exporter import generar_excel_desde_campos
+import pandas as pd
+import io
+from flask import jsonify, send_file, request
+
 
 
 
@@ -20,11 +25,58 @@ from utils.parse_cfdi import parse_cfdi, parse_cfdi_lote
 app = Flask(__name__)
 # Configura el tamaño máximo permitido para archivos cargados (5MB)
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+
+@app.route('/exportar-editor', methods=['POST'])
+def exportar_editor():
+    try:
+        # Recibir los datos desde JS (lista de selecciones con coordenadas)
+        campos = request.get_json()
+
+        # Convertir los datos a DataFrame
+        df = pd.DataFrame(campos)
+
+        # Crear Excel en memoria
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False, sheet_name='Campos Seleccionados')
+
+        output.seek(0)
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name='factura_editada.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/exportar-campos', methods=['POST'])
+def exportar_campos():
+    try:
+        campos = request.get_json()
+        if not campos:
+            return jsonify({"error": "No se recibieron campos"}), 400
+
+        output, filename = generar_excel_desde_campos(campos)
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    except Exception as e:
+        return jsonify({"error": f"Error al generar Excel: {str(e)}"}), 500
+
 # Define la ruta principal del sitio ("/")
 @app.route('/')
 def index():
     # Muestra la plantilla HTML llamada 'index.html'
     return render_template('index.html')
+
+@app.route('/editor')
+def editor():
+    return render_template('editor.html')
+
 # Define una ruta que acepta solo solicitudes POST para subir archivos
 @app.route('/subir', methods=['POST'])
 def subir():

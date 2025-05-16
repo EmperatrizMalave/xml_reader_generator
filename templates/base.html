@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mejora en móviles -->
+  <title>{% block title %}Convertidor Inteligente{% endblock %}</title>
+
+  <!-- Estilos comunes -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <!-- Navbar común -->
+  <div class="navbar">
+    <button class="tablinks" onclick="location.href='/'">Inicio</button>
+    <button class="tablinks" onclick="location.href='/#xml'">CFDI XML a Excel</button>
+    <button class="tablinks" onclick="location.href='/editor'">Editor PDF</button>
+    <button class="tablinks" onclick="location.href='/#imagen'">Imagen a Excel</button>
+  </div>
+
+  <!-- Contenido de la página que cambia -->
+  <div class="main-content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer global -->
+  <footer id="footer">
+    <p>© <span id="anio-actual"></span> Coromoto Malave. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Scripts comunes -->
+  <script>
+    document.getElementById("anio-actual").textContent = new Date().getFullYear();
+  </script>
+  <script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/form-reset.js') }}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+
